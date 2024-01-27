@@ -13,7 +13,7 @@ int main(int agrc, char **argv)
         {
             printf("Remaimng Time %d\n", remainingtime);
             remainingtime--;
-            char puff[20];
+            char ProcessVAR[20];
             if (remainingtime <= 0)
                 break;
             currentC = getClk();

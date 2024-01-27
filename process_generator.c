@@ -11,9 +11,9 @@
 typedef enum scheduling_ChoosenAlgs_ {HPF, SRTN,SJF } scheduling_ChoosenAlgs;
 scheduling_ChoosenAlgs chosen_alg;
 void clearResources(int);
-int upQ;
+int uPrioirityQueue;
 int ended=0;
-void handle(int signum) //handeler that change ended form 0 to 1 when the scheduler finish.
+void Waiting(int signum) //handeler that change ended form 0 to 1 when the scheduler finish.
 {
     ended = 1;
 }
@@ -26,20 +26,20 @@ heap_t* read_ints (const char* file_name)
 {
   FILE* file = fopen (file_name, "r");
   process p[10];
-  heap_t *process_list = (heap_t *)calloc(1, sizeof(heap_t));
+  heap_t *AllProcesses = (heap_t *)calloc(1, sizeof(heap_t));
 
   
   for (int i = 0; i < 100; i++){
     if (!feof (file)){
       fscanf (file, "%d %d %d %d", &p[i].ID, &p[i].ArrTime, &p[i].RunTime, &p[i].Priority);
-      push(process_list,p[i].ArrTime,&p[i]);
-      printf("list size:%d,ID:%d,ArrTime:%d\n",process_list->len,p[i].ID,p[i].ArrTime);
+      push(AllProcesses,p[i].ArrTime,&p[i]);
+      printf("list size:%d,ID:%d,ArrTime:%d\n",AllProcesses->len,p[i].ID,p[i].ArrTime);
 
     }
   }  
 
   fclose (file);   
-  return process_list;     
+  return AllProcesses;     
 }
 //-------------------  get ChoosenAlg num  ----------------------------------------
 
@@ -155,14 +155,14 @@ int main(int argc, char * argv[])
 {
 //-----------  some initializations  ----------------------
     key_t key_up =123;
-    upQ = msgget(key_up, IPC_CREAT | 0644);
+    uPrioirityQueue = msgget(key_up, IPC_CREAT | 0644);
     signal(SIGINT, clearResources);
     char ChoosenAlg_num[20];
 //---------------------------------------------------------
     // TODO Initialization
     // 1. Read the input files.
     heap_t *list = (heap_t *)calloc(1, sizeof(heap_t));
-    list =read_ints("test.txt");
+    list =read_ints("processes.txt");
 //---------------------------------------------------------
     // 2. Ask the user for the chosen scheduling ChoosenAlg and its parameters, if there are any.
     chosen_alg =ask_for_alg();
@@ -188,7 +188,7 @@ int main(int argc, char * argv[])
         mss.RunTime=proc->RunTime;
         printf("check if mss is sent %d\n", getClk());
         
-        int send_val=msgsnd(upQ, &mss, sizeof(mss) - sizeof(mss.mtype), !IPC_NOWAIT);
+        int send_val=msgsnd(uPrioirityQueue, &mss, sizeof(mss) - sizeof(mss.mtype), !IPC_NOWAIT);
         if(send_val == -1)//if no process is sent
         {
             perror("Error in receiving"); 
@@ -197,10 +197,10 @@ int main(int argc, char * argv[])
     }
     printf("Sending!! Last");
     mss.ID=0;
-    int send_val=msgsnd(upQ, &mss, sizeof(mss) - sizeof(mss.mtype), !IPC_NOWAIT);
+    int send_val=msgsnd(uPrioirityQueue, &mss, sizeof(mss) - sizeof(mss.mtype), !IPC_NOWAIT);
     
     while(!ended){
-    signal(SIGINT, handle); 
+    signal(SIGINT, Waiting); 
     }
 //-------------------------------------------------------------
     // 7. Clear clock resources
@@ -218,7 +218,7 @@ void clearResources(int signum)
 {
     printf("clearing resources \n");
     //TODO Clears all resources in case of interruption
-    msgctl(upQ, IPC_RMID, (struct msqid_ds *) 0);
+    msgctl(uPrioirityQueue, IPC_RMID, (struct msqid_ds *) 0);
     exit(0);
 }
 

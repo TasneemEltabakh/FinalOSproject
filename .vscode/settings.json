@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "headers.h": "c",
+        "types.h": "c",
+        "priorityqueue.h": "c",
+        "stdio.h": "c"
+    }
+}

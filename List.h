@@ -1,8 +1,8 @@
-/* double linked list */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "pq.h"
+#include "PriorityQueue.h"
 
 struct List
 {
