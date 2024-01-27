@@ -11,6 +11,7 @@ typedef struct //Data_Struc that use of each process
     int RemaingTime;
     int WatingTime;
     int Stoped;
+    int startingTime;
     int Running;
     int memsize;
     int memindx;
