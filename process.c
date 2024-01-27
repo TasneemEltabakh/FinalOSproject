@@ -1,7 +1,6 @@
 #include "headers.h"
 
 /* Modify this file as needed*/
-
 int main(int agrc, char **argv)
 {
     initClk();
@@ -15,8 +14,13 @@ int main(int agrc, char **argv)
             remainingtime--;
             char ProcessVAR[20];
             if (remainingtime <= 0)
+            {
+                finished(1);
                 break;
+            }
+
             currentC = getClk();
+            finished(0);
         }
     }
     printf("Process Terminated :) \n");

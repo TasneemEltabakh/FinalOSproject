@@ -22,8 +22,16 @@ typedef short bool;
 #define false 0
 
 #define SHKEY 300
+int ISfinished=0;
 
-
+int finished(int val)
+{
+    ISfinished=val;
+}
+int isfinished()
+{
+    return ISfinished;
+}
 ///==============================
 //don't mess with this variable//
 int * shmaddr;                 //
