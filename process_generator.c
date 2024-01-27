@@ -8,8 +8,8 @@
 
 
 //---------------- some initializations --------------
-typedef enum scheduling_algorithms_ {HPF, SRTN,SJF } scheduling_algorithms;
-scheduling_algorithms chosen_alg;
+typedef enum scheduling_ChoosenAlgs_ {HPF, SRTN,SJF } scheduling_ChoosenAlgs;
+scheduling_ChoosenAlgs chosen_alg;
 void clearResources(int);
 int upQ;
 int ended=0;
@@ -41,10 +41,10 @@ heap_t* read_ints (const char* file_name)
   fclose (file);   
   return process_list;     
 }
-//-------------------  get algorithm num  ----------------------------------------
+//-------------------  get ChoosenAlg num  ----------------------------------------
 
-/// @brief function to return the algorithm number to be sent to schduler
-/// @return char of the algorithm num
+/// @brief function to return the ChoosenAlg number to be sent to schduler
+/// @return char of the ChoosenAlg num
 char* get_algo_num()
 {
     if(chosen_alg ==HPF)
@@ -54,19 +54,19 @@ char* get_algo_num()
     if(chosen_alg ==SJF)
         return "3";
 }
-//----------------  ask about which algorithm  ------------------------------------------------
+//----------------  ask about which ChoosenAlg  ------------------------------------------------
 
-/// @brief function to ask the user which algorithm to use 
-/// @return the algorithm to be used in the enum of algorithms
-scheduling_algorithms ask_for_alg(){
+/// @brief function to ask the user which ChoosenAlg to use 
+/// @return the ChoosenAlg to be used in the enum of ChoosenAlgs
+scheduling_ChoosenAlgs ask_for_alg(){
  
        
     int answer;
-    scheduling_algorithms chosed_alg;
+    scheduling_ChoosenAlgs chosed_alg;
     answer = -1;
     while(!(answer ==1 || answer ==2 | answer ==3))
     {
-        printf("Please specifiy an algorithm for sceduling. \n 1: HPF \n 2: SRTN\n 3: SJF \n ");
+        printf("Please specifiy an ChoosenAlg for sceduling. \n 1: HPF \n 2: SRTN\n 3: SJF \n ");
         scanf("%i", &answer);
 
         switch (answer)
@@ -103,7 +103,7 @@ typedef struct
     int Priority;
     int memsize;
 
-} msgbuff;
+} OurMessage;
 //------------------  fork clk  --------------------------------------------------
 
 /// @brief function to fork the clk
@@ -157,24 +157,24 @@ int main(int argc, char * argv[])
     key_t key_up =123;
     upQ = msgget(key_up, IPC_CREAT | 0644);
     signal(SIGINT, clearResources);
-    char algorithm_num[20];
+    char ChoosenAlg_num[20];
 //---------------------------------------------------------
     // TODO Initialization
     // 1. Read the input files.
     heap_t *list = (heap_t *)calloc(1, sizeof(heap_t));
     list =read_ints("test.txt");
 //---------------------------------------------------------
-    // 2. Ask the user for the chosen scheduling algorithm and its parameters, if there are any.
+    // 2. Ask the user for the chosen scheduling ChoosenAlg and its parameters, if there are any.
     chosen_alg =ask_for_alg();
 //---------------------------------------------------------    
     // 3. Initiate and create the scheduler and clock processes.
     fork_clk();
     initClk();      //use this function to initialize the clock
-    fork_schedular(algorithm_num);
+    fork_schedular(ChoosenAlg_num);
 //---------------------------------------------------------
     // TODO Generation Main Loop
     // 6. Send the information to the scheduler at the appropriate time.
-    msgbuff mss;
+    OurMessage mss;
     while(list->len>0)
     {
         if(top(list)->ArrTime <= getClk())
