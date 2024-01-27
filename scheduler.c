@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     RunningNowProcess.Priority = -1;
     AllProcesses = (heap_t *)calloc(1, sizeof(heap_t));
     EndedProceess = (heap_t *)calloc(1, sizeof(heap_t));
-    msgqid1 = msgget((key_t)123, 0644 | IPC_CREAT);
+    msgqid1 = msgget((key_t)292002, 0644 | IPC_CREAT);
 
     initClk();
 

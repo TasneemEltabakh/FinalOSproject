@@ -11,7 +11,7 @@ int main(int agrc, char **argv)
     {
         if (currentC < getClk())
         {
-            printf("Remaimng Time %d\n", remainingtime);
+            printf("Remaimng Time -> %d\n", remainingtime);
             remainingtime--;
             char ProcessVAR[20];
             if (remainingtime <= 0)
@@ -19,7 +19,7 @@ int main(int agrc, char **argv)
             currentC = getClk();
         }
     }
-    printf("Process Terminated\n");
+    printf("Process Terminated :) \n");
     kill(getppid(), SIGINT);
     exit(0);
 }
