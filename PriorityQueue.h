@@ -58,6 +58,28 @@ void push(heap_t *h, int priority, process *data)
     h->nodes[i].data.memindx = data->memindx;
     h->len++;
 }
+void pushQ(heap_t *h, int priority, process *data)
+{
+    if (h->len + 1 >= h->size)
+    {
+        h->size = h->size ? h->size * 2 : 4;
+        h->nodes = (node_t *)realloc(h->nodes, h->size * sizeof(node_t));
+    }
+    h->len++;
+    int i = h->len;
+    h->nodes[i].priority = priority;
+    h->nodes[i].data.ID = data->ID;
+    h->nodes[i].data.ArrTime = data->ArrTime;
+    h->nodes[i].data.RunTime = data->RunTime;
+    h->nodes[i].data.Priority = data->Priority;
+    h->nodes[i].data.PID = data->PID;
+    h->nodes[i].data.WatingTime = data->WatingTime;
+    h->nodes[i].data.RemaingTime = data->RemaingTime;
+    h->nodes[i].data.Stoped = data->Stoped;
+    h->nodes[i].data.memsize = data->memsize;
+    h->nodes[i].data.memindx = data->memindx;
+}
+
 
 process *pop(heap_t *h)
 {

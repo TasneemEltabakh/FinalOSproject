@@ -3,27 +3,71 @@
 /* Modify this file as needed*/
 int main(int agrc, char **argv)
 {
+    bool x = true;
+
     initClk();
     int remainingtime = atoi(argv[1]);
     int currentC = getClk();
-    while (true)
+    int sliceTime = 2;
+    printf("slice time -> %d\n", sliceTime);
+    printf("Current clock is %d\n", currentC);
+    if (sliceTime > 0)
     {
-        if (currentC < getClk())
+        while (x)
         {
-            printf("Remaimng Time -> %d\n", remainingtime);
-            remainingtime--;
-            char ProcessVAR[20];
-            if (remainingtime <= 0)
+            if (currentC < getClk())
             {
-                finished(1);
-                break;
-            }
+                for (int i = 0; i < sliceTime; i++)
+                {
+                    printf("Remaimng Time -> %d\n", remainingtime);
+                    remainingtime--;
+                    char ProcessVAR[20];
+                    if (remainingtime <= 0)
+                    {
+                        finished(1);
+                        printf("Process Terminated :) \n");
+                        kill(getppid(), SIGINT);
+                        exit(0);
+                        x=false;
+                        break;
+                    }
+                    currentC = getClk();
+                    finished(0);
 
-            currentC = getClk();
-            finished(0);
+                    finished(0);
+                    if(i ==1)
+                    {
+                        x=false;
+                    }
+                }
+            }
         }
+
+        kill(getppid(), SIGINT);
+        exit(0);
+        return 1;
     }
-    printf("Process Terminated :) \n");
-    kill(getppid(), SIGINT);
-    exit(0);
+    else
+    {
+        while (true)
+        {
+            if (currentC < getClk())
+            {
+                printf("Remaimng Time -> %d\n", remainingtime);
+                remainingtime--;
+                char ProcessVAR[20];
+                if (remainingtime <= 0)
+                {
+                    finished(1);
+                    break;
+                }
+
+                currentC = getClk();
+                finished(0);
+            }
+        }
+        printf("Process Terminated :) \n");
+        kill(getppid(), SIGINT);
+        exit(0);
+    }
 }
