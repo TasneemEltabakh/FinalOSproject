@@ -138,15 +138,10 @@ void Waiting(int signum)
 
 void SJF(FILE *logFile)
 {
-    if (isfinished() == 1)
-    {
-        sprintf(writing, "At\ttime\t%d\tprocess\t%d\tfinished\tarr\t%d\ttotal\t%d\tremain\t%d\twait\t%d\tTA\t%d\tWTA\t%0.2f\n", getClk(), RunningNowProcess.ID, RunningNowProcess.Stoped, RunningNowProcess.RunTime, RunningNowProcess.RemaingTime, RunningNowProcess.WatingTime, (getClk() - RunningNowProcess.ArrTime), (float)(getClk() - RunningNowProcess.ArrTime) / RunningNowProcess.RunTime);
-        fprintf(logFile, "%s", writing);
-    }
 
-    if (top(AllProcesses) != NULL && (IsFinished == 1 || RunningNowProcess.ID == 0))
+    if (IsFinished == 1 || RunningNowProcess.ID == 0)
     {
-        if (RunningNowProcess.ID != 0)
+        if (RunningNowProcess.ID != 0 && RunningNowProcess.Running == 1)
         {
             RunningNowProcess.RemaingTime = 0;
             RunningNowProcess.Running = 0;
@@ -159,57 +154,55 @@ void SJF(FILE *logFile)
             fprintf(logFile, "%s", writing);
             push(EndedProceess, RunningNowProcess.ID, &RunningNowProcess);
         }
-
-        ProcessVAR = pop(AllProcesses);
-        RunningNowProcess.ID = ProcessVAR->ID;
-        RunningNowProcess.PID = ProcessVAR->PID;
-        RunningNowProcess.RunTime = ProcessVAR->RunTime;
-        RunningNowProcess.ArrTime = ProcessVAR->ArrTime;
-        RunningNowProcess.Priority = ProcessVAR->Priority;
-        RunningNowProcess.WatingTime = ProcessVAR->WatingTime;
-        RunningNowProcess.RemaingTime = ProcessVAR->RemaingTime;
-        RunningNowProcess.Stoped = ProcessVAR->Stoped;
-
-        if (RunningNowProcess.PID == 0)
+        if (top(AllProcesses) != NULL)
         {
-            int pid = fork();
-            if (pid == -1)
-                perror("error in fork");
 
-            else if (pid == 0)
-            {
-                char BurstTime[5];
-                char arrt[5];
-                sprintf(BurstTime, "%d", RunningNowProcess.RunTime);
-                printf(arrt, "%d", RunningNowProcess.ArrTime);
-                execl("./process.out", "process.out", BurstTime, NULL);
-                RunningNowProcess.startingTime = getClk();
-                RunningNowProcess.WatingTime += (getClk() - RunningNowProcess.ArrTime);
-                RunningNowProcess.Running = 1;
-                sprintf(writing, "At\ttime\t%d\tprocess\t%d\tstarted\t\tarr\t%d\ttotal\t%d\tremain\t%d\twait\t%d\n", getClk(), RunningNowProcess.ID, RunningNowProcess.startingTime, RunningNowProcess.RunTime, RunningNowProcess.RemaingTime, RunningNowProcess.WatingTime);
-                fprintf(logFile, "%s", writing);
-            }
-            else
-            {
-                RunningNowProcess.PID = pid;
-                RunningNowProcess.startingTime = getClk();
-                RunningNowProcess.WatingTime += (getClk() - RunningNowProcess.ArrTime);
-                RunningNowProcess.Running = 1;
-                printf("Process ID: %d Has Started :) \n", RunningNowProcess.ID);
-                sprintf(writing, "At\ttime\t%d\tprocess\t%d\tstarted\t\tarr\t%d\ttotal\t%d\tremain\t%d\twait\t%d\n", getClk(), RunningNowProcess.ID, RunningNowProcess.startingTime, RunningNowProcess.RunTime, RunningNowProcess.RemaingTime, RunningNowProcess.WatingTime);
-                fprintf(logFile, "%s", writing);
-            }
-        }
-        if (isfinished() == 1)
-        {
-            sprintf(writing, "At\ttime\t%d\tprocess\t%d\tfinished\tarr\t%d\ttotal\t%d\tremain\t%d\twait\t%d\tTA\t%d\tWTA\t%0.2f\n", getClk(), RunningNowProcess.ID, RunningNowProcess.Stoped, RunningNowProcess.RunTime, RunningNowProcess.RemaingTime, RunningNowProcess.WatingTime, (getClk() - RunningNowProcess.ArrTime), (float)(getClk() - RunningNowProcess.ArrTime) / RunningNowProcess.RunTime);
-            fprintf(logFile, "%s", writing);
-        }
+            ProcessVAR = pop(AllProcesses);
+            RunningNowProcess.ID = ProcessVAR->ID;
+            RunningNowProcess.PID = ProcessVAR->PID;
+            RunningNowProcess.RunTime = ProcessVAR->RunTime;
+            RunningNowProcess.ArrTime = ProcessVAR->ArrTime;
+            RunningNowProcess.Priority = ProcessVAR->Priority;
+            RunningNowProcess.WatingTime = ProcessVAR->WatingTime;
+            RunningNowProcess.RemaingTime = ProcessVAR->RemaingTime;
+            RunningNowProcess.Stoped = ProcessVAR->Stoped;
 
-        IsFinished = 0;
-        StartProcess = getClk();
+            if (RunningNowProcess.PID == 0)
+            {
+                int pid = fork();
+                if (pid == -1)
+                    perror("error in fork");
+
+                else if (pid == 0)
+                {
+                    char BurstTime[5];
+                    char arrt[5];
+                    sprintf(BurstTime, "%d", RunningNowProcess.RunTime);
+                    printf(arrt, "%d", RunningNowProcess.ArrTime);
+                    execl("./process.out", "process.out", BurstTime, NULL);
+                    RunningNowProcess.startingTime = getClk();
+                    RunningNowProcess.WatingTime += (getClk() - RunningNowProcess.ArrTime);
+                    RunningNowProcess.Running = 1;
+                    sprintf(writing, "At\ttime\t%d\tprocess\t%d\tstarted\t\tarr\t%d\ttotal\t%d\tremain\t%d\twait\t%d\n", getClk(), RunningNowProcess.ID, RunningNowProcess.startingTime, RunningNowProcess.RunTime, RunningNowProcess.RemaingTime, RunningNowProcess.WatingTime);
+                    fprintf(logFile, "%s", writing);
+                }
+                else
+                {
+                    RunningNowProcess.PID = pid;
+                    RunningNowProcess.startingTime = getClk();
+                    RunningNowProcess.WatingTime += (getClk() - RunningNowProcess.ArrTime);
+                    RunningNowProcess.Running = 1;
+                    printf("Process ID: %d Has Started :) \n", RunningNowProcess.ID);
+                    sprintf(writing, "At\ttime\t%d\tprocess\t%d\tstarted\t\tarr\t%d\ttotal\t%d\tremain\t%d\twait\t%d\n", getClk(), RunningNowProcess.ID, RunningNowProcess.startingTime, RunningNowProcess.RunTime, RunningNowProcess.RemaingTime, RunningNowProcess.WatingTime);
+                    fprintf(logFile, "%s", writing);
+                }
+            }
+
+            IsFinished = 0;
+            StartProcess = getClk();
+        }
     }
-    else if (top(AllProcesses) == NULL && IsLastOne == 1 && IsFinished)
+     if (top(AllProcesses) == NULL && IsLastOne == 1 && IsFinished)
     {
         RunningNowProcess.RemaingTime = 0;
         RunningNowProcess.Running = 0;
@@ -227,20 +220,14 @@ void SJF(FILE *logFile)
         returning = -1;
         return;
     }
-    if (isfinished() == 1)
-    {
-        sprintf(writing, "At\ttime\t%d\tprocess\t%d\tfinished\tarr\t%d\ttotal\t%d\tremain\t%d\twait\t%d\tTA\t%d\tWTA\t%0.2f\n", getClk(), RunningNowProcess.ID, RunningNowProcess.Stoped, RunningNowProcess.RunTime, RunningNowProcess.RemaingTime, RunningNowProcess.WatingTime, (getClk() - RunningNowProcess.ArrTime), (float)(getClk() - RunningNowProcess.ArrTime) / RunningNowProcess.RunTime);
-        fprintf(logFile, "%s", writing);
-    }
 }
-
 void SRT(FILE *logFile)
 {
-    if (IsFinished == 1&& RunningNowProcess.Running == 1)
+    if (IsFinished == 1 && RunningNowProcess.Running == 1)
     {
         RunningNowProcess.RemaingTime = 0;
         RunningNowProcess.Stoped = getClk();
-        RunningNowProcess.Running=0;
+        RunningNowProcess.Running = 0;
         averageWTA += (float)((getClk() - RunningNowProcess.ArrTime) / RunningNowProcess.RunTime);
         averageWt += (float)RunningNowProcess.WatingTime;
         cpuilization += RunningNowProcess.RunTime;
