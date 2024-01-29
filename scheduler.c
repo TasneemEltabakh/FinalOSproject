@@ -236,6 +236,19 @@ void SJF(FILE *logFile)
 
 void SRT(FILE *logFile)
 {
+    if (IsFinished == 1&& RunningNowProcess.Running == 1)
+    {
+        RunningNowProcess.RemaingTime = 0;
+        RunningNowProcess.Stoped = getClk();
+        RunningNowProcess.Running=0;
+        averageWTA += (float)((getClk() - RunningNowProcess.ArrTime) / RunningNowProcess.RunTime);
+        averageWt += (float)RunningNowProcess.WatingTime;
+        cpuilization += RunningNowProcess.RunTime;
+        push(EndedProceess, RunningNowProcess.ID, &RunningNowProcess);
+        sprintf(writing, "At\ttime\t%d\tprocess\t%d\tfinished\tarr\t%d\ttotal\t%d\tremain\t%d\twait\t%d\tTA\t%d\tWTA\t%0.2f\n", getClk(), RunningNowProcess.ID, RunningNowProcess.ArrTime, RunningNowProcess.RunTime, RunningNowProcess.RemaingTime, RunningNowProcess.WatingTime, (getClk() - RunningNowProcess.ArrTime), (float)(getClk() - RunningNowProcess.ArrTime) / RunningNowProcess.RunTime);
+        fprintf(logFile, "%s", writing);
+        printf("Process ID: %d finished\n", RunningNowProcess.ID);
+    }
 
     if (top(AllProcesses) != NULL && (RunningNowProcess.Priority == -1 || top(AllProcesses)->RemaingTime < RunningNowProcess.RemaingTime || IsFinished == 1))
     {
@@ -250,20 +263,6 @@ void SRT(FILE *logFile)
             fprintf(logFile, "%s", writing);
             push(AllProcesses, RunningNowProcess.RemaingTime, &RunningNowProcess);
         }
-        else if (IsFinished == 1)
-        {
-            RunningNowProcess.RemaingTime = 0;
-            RunningNowProcess.Stoped = getClk();
-
-            averageWTA += (float)((getClk() - RunningNowProcess.ArrTime) / RunningNowProcess.RunTime);
-            averageWt += (float)RunningNowProcess.WatingTime;
-            cpuilization += RunningNowProcess.RunTime;
-            push(EndedProceess, RunningNowProcess.ID, &RunningNowProcess);
-            sprintf(writing, "At\ttime\t%d\tprocess\t%d\tfinished\tarr\t%d\ttotal\t%d\tremain\t%d\twait\t%d\tTA\t%d\tWTA\t%0.2f\n", getClk(), RunningNowProcess.ID, RunningNowProcess.ArrTime, RunningNowProcess.RunTime, RunningNowProcess.RemaingTime, RunningNowProcess.WatingTime, (getClk() - RunningNowProcess.ArrTime), (float)(getClk() - RunningNowProcess.ArrTime) / RunningNowProcess.RunTime);
-            fprintf(logFile, "%s", writing);
-            printf("Process ID: %d finished\n", RunningNowProcess.ID);
-        }
-
         ProcessVAR = pop(AllProcesses);
         RunningNowProcess.ID = ProcessVAR->ID;
         RunningNowProcess.PID = ProcessVAR->PID;
@@ -351,11 +350,11 @@ void RR(FILE *logFile)
             printf("Process ID: %d is pushed at time %d\n", RunningNowProcess.ID, getClk());
         }
     }
-    else if (IsFinished == 1 && RunningNowProcess.Running==1 )
+    else if (IsFinished == 1 && RunningNowProcess.Running == 1)
     {
         RunningNowProcess.RemaingTime = 0;
         RunningNowProcess.Stoped = getClk();
-        RunningNowProcess.Running=0;
+        RunningNowProcess.Running = 0;
         averageWTA += (float)((getClk() - RunningNowProcess.ArrTime) / RunningNowProcess.RunTime);
         averageWt += (float)RunningNowProcess.WatingTime;
         cpuilization += RunningNowProcess.RunTime;
