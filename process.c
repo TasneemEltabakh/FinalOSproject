@@ -11,7 +11,7 @@ int main(int agrc, char **argv)
     {
         if (currentC < getClk())
         {
-            printf("Remaimng Time %d\n", remainingtime);
+            printf("Remaimng Time -> %d\n", remainingtime);
             remainingtime--;
             char puff[20];
             if (remainingtime <= 0)
